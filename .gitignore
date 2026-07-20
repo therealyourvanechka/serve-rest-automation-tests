@@ -1,0 +1,6 @@
+.gradle
+.idea
+build/
+allureReport/
+.env
+.DS_Store

@@ -1,0 +1,1 @@
+rootProject.name = "serve-rest-automation-tests"
