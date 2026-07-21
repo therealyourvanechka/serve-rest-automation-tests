@@ -1,8 +1,6 @@
 package com.serverest;
 
 import com.serverest.client.AuthClient;
-import com.serverest.client.CarrinhosClient;
-import com.serverest.client.ProdutosClient;
 import com.serverest.client.UsuariosClient;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.RestAssured;
@@ -13,8 +11,6 @@ public abstract class BaseTest {
 
     protected static AuthClient authClient;
     protected static UsuariosClient usuariosClient;
-    protected static ProdutosClient produtosClient;
-    protected static CarrinhosClient carrinhosClient;
 
     @BeforeAll
     static void setUpFramework() {

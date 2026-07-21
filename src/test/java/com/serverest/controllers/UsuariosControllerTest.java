@@ -95,10 +95,7 @@ class UsuariosControllerTest extends BaseTest {
     @DisplayName("US-04: Создание с administrador=yes (невалидное значение)")
     @Severity(SeverityLevel.NORMAL)
     void shouldReturn400ForInvalidAdministradorValue() {
-        UsuarioRequest request = UsuarioRequest.builder()
-                .nome(ServeRestDataFactory.randomNome())
-                .email(ServeRestDataFactory.randomEmail())
-                .password(ServeRestDataFactory.randomPassword())
+        UsuarioRequest request = ServeRestDataFactory.defaultUsuario()
                 .administrador("yes")
                 .build();
 
