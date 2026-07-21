@@ -57,8 +57,8 @@ public class CarrinhosClient extends BaseClient {
     }
 
     @Step("Завершение покупки DELETE /carrinhos/concluir-compra")
-    public MessageResponse checkout() {
-        return checkoutRaw()
+    public MessageResponse completePurchase() {
+        return completePurchaseRaw()
                 .then()
                 .statusCode(HttpStatus.SC_OK)
                 .extract()
@@ -66,7 +66,7 @@ public class CarrinhosClient extends BaseClient {
     }
 
     @Step("Завершение покупки DELETE /carrinhos/concluir-compra (raw)")
-    public Response checkoutRaw() {
+    public Response completePurchaseRaw() {
         return super.deleteEndpoint("/carrinhos/concluir-compra");
     }
 
