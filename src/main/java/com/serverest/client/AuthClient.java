@@ -32,6 +32,6 @@ public class AuthClient extends BaseClient {
             throw new AuthenticationException(
                     "Не удалось получить токен: " + response.getMessage());
         }
-        return response.getAuthorization().replace("Bearer ", "");
+        return response.getAuthorization();
     }
 }

@@ -17,7 +17,7 @@ public abstract class BaseClient {
 
     public BaseClient(String token) {
         requestSpec = Specifications.getRequestSpec()
-                .header("Authorization", "Bearer " + token);
+                .header("Authorization", token);
     }
 
     protected Response post(String endpoint, Object body) {

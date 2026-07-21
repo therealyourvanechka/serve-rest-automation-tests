@@ -21,8 +21,10 @@ public class CarrinhosClient extends BaseClient {
     @Step("Создание корзины POST /carrinhos")
     public MessageResponse create(CarrinhoRequest body) {
         return createRaw(body)
-                .then().statusCode(HttpStatus.SC_CREATED)
-                .extract().as(MessageResponse.class);
+                .then()
+                .statusCode(HttpStatus.SC_CREATED)
+                .extract()
+                .as(MessageResponse.class);
     }
 
     @Step("Создание корзины POST /carrinhos (raw)")
@@ -43,8 +45,10 @@ public class CarrinhosClient extends BaseClient {
     @Step("Поиск корзины GET /carrinhos/{id}")
     public CarrinhoResponse getById(String id) {
         return getByIdRaw(id)
-                .then().statusCode(HttpStatus.SC_OK)
-                .extract().as(CarrinhoResponse.class);
+                .then()
+                .statusCode(HttpStatus.SC_OK)
+                .extract()
+                .as(CarrinhoResponse.class);
     }
 
     @Step("Поиск корзины GET /carrinhos/{id} (raw)")
@@ -55,8 +59,10 @@ public class CarrinhosClient extends BaseClient {
     @Step("Завершение покупки DELETE /carrinhos/concluir-compra")
     public MessageResponse checkout() {
         return checkoutRaw()
-                .then().statusCode(HttpStatus.SC_OK)
-                .extract().as(MessageResponse.class);
+                .then()
+                .statusCode(HttpStatus.SC_OK)
+                .extract()
+                .as(MessageResponse.class);
     }
 
     @Step("Завершение покупки DELETE /carrinhos/concluir-compra (raw)")
@@ -67,8 +73,10 @@ public class CarrinhosClient extends BaseClient {
     @Step("Отмена покупки DELETE /carrinhos/cancelar-compra")
     public MessageResponse cancelPurchase() {
         return cancelPurchaseRaw()
-                .then().statusCode(HttpStatus.SC_OK)
-                .extract().as(MessageResponse.class);
+                .then()
+                .statusCode(HttpStatus.SC_OK)
+                .extract()
+                .as(MessageResponse.class);
     }
 
     @Step("Отмена покупки DELETE /carrinhos/cancelar-compra (raw)")
