@@ -25,7 +25,5 @@ public abstract class BaseTest {
 
         authClient = new AuthClient();
         usuariosClient = new UsuariosClient();
-        produtosClient = new ProdutosClient();
-        carrinhosClient = new CarrinhosClient();
     }
 }
