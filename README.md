@@ -13,3 +13,4 @@
 - Реализованы HTTP-клиенты (Auth, Usuarios, Produtos, Carrinhos)
 - Настроен BaseTest
 - Реализована ServeRestDataFactory
+- Реализованы 2 из 5 тестовых классов (AuthControllerTest, UsuariosControllerTest)
