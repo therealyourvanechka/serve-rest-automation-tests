@@ -71,7 +71,8 @@ class UsuariosControllerTest extends BaseTest {
 
         Response duplicateResponse = usuariosClient.createRaw(duplicateRequest);
         assertThat(duplicateResponse.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
-        assertThat(duplicateResponse.jsonPath().getString("message")).isNotBlank();
+        assertThat(duplicateResponse.jsonPath().getString("message"))
+                .contains("já está sendo usado");
     }
 
     @Test
@@ -138,7 +139,8 @@ class UsuariosControllerTest extends BaseTest {
         try {
             Response deleteResponse = usuariosClient.deleteRaw(adminId);
             assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
-            assertThat(deleteResponse.jsonPath().getString("message")).isNotBlank();
+            assertThat(deleteResponse.jsonPath().getString("message"))
+                    .contains("carrinho");
 
             UsuarioResponse getResponse = usuariosClient.getById(adminId);
             assertThat(getResponse.getEmail()).isEqualTo(adminRequest.getEmail());
@@ -203,7 +205,8 @@ class UsuariosControllerTest extends BaseTest {
 
         Response updateBResponse = usuariosClient.updateRaw(userBId, updateBRequest);
         assertThat(updateBResponse.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
-        assertThat(updateBResponse.jsonPath().getString("message")).isNotBlank();
+        assertThat(updateBResponse.jsonPath().getString("message"))
+                .contains("já está sendo usado");
     }
 
     @Test
