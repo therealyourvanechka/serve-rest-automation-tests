@@ -1,7 +1,6 @@
 package com.serverest.client;
 
-import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.http.ContentType;
+import com.serverest.util.Specifications;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
@@ -10,25 +9,15 @@ import java.util.Map;
 import static io.restassured.RestAssured.given;
 
 public abstract class BaseClient {
-    private static final String BASE_URI = "https://serverest.dev";
-
     protected final RequestSpecification requestSpec;
 
     public BaseClient() {
-        requestSpec = buildBaseSpec();
+        requestSpec = Specifications.getRequestSpec();
     }
 
     public BaseClient(String token) {
-        requestSpec = buildBaseSpec()
+        requestSpec = Specifications.getRequestSpec()
                 .header("Authorization", "Bearer " + token);
-    }
-
-    private static RequestSpecification buildBaseSpec() {
-        return new RequestSpecBuilder()
-                .setBaseUri(BASE_URI)
-                .setContentType(ContentType.JSON)
-                .addHeader("Accept", "application/json")
-                .build();
     }
 
     protected Response post(String endpoint, Object body) {
