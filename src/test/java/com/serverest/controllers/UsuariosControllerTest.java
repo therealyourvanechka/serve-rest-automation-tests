@@ -168,7 +168,7 @@ class UsuariosControllerTest extends BaseTest {
     @DisplayName("US-07: PUT на несуществующий ID создаёт нового пользователя")
     @Severity(SeverityLevel.NORMAL)
     void shouldCreateNewUserOnPutWithNonExistentId() {
-        String nonExistentId = UUID.randomUUID().toString();
+        String nonExistentId = UUID.randomUUID().toString().replace("-", "").substring(0, 16);
         UsuarioRequest request = ServeRestDataFactory.defaultUsuario().build();
 
         Response updateResponse = usuariosClient.updateRaw(nonExistentId, request);
