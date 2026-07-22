@@ -123,13 +123,13 @@ class UsuariosControllerTest extends BaseTest {
 
         CarrinhosClient adminCarrinhosClient = new CarrinhosClient(adminToken);
 
+        ProdutoCarrinhoRequest produtoCarrinho = ProdutoCarrinhoRequest.builder()
+                .idProduto(produtoId)
+                .quantidade(1)
+                .build();
+
         CarrinhoRequest carrinhoRequest = CarrinhoRequest.builder()
-                .produtos(List.of(
-                        ProdutoCarrinhoRequest.builder()
-                                .idProduto(produtoId)
-                                .quantidade(1)
-                                .build()
-                ))
+                .produtos(List.of(produtoCarrinho))
                 .build();
         adminCarrinhosClient.create(carrinhoRequest);
 

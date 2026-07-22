@@ -314,13 +314,13 @@ class ProdutosControllerTest extends BaseTest {
         MessageResponse productResponse = adminProdutosClient.create(productRequest);
         String productId = productResponse.getId();
 
+        ProdutoCarrinhoRequest produtoCarrinho = ProdutoCarrinhoRequest.builder()
+                .idProduto(productId)
+                .quantidade(1)
+                .build();
+
         CarrinhoRequest cartRequest = CarrinhoRequest.builder()
-                .produtos(List.of(
-                        ProdutoCarrinhoRequest.builder()
-                                .idProduto(productId)
-                                .quantidade(1)
-                                .build()
-                ))
+                .produtos(List.of(produtoCarrinho))
                 .build();
         adminCarrinhosClient.create(cartRequest);
 
