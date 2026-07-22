@@ -45,9 +45,7 @@ class CarrinhosControllerTest extends BaseTest {
         UsuarioRequest adminRequest = ServeRestDataFactory.defaultAdmin().build();
         MessageResponse adminCreated = usuariosClient.create(adminRequest);
         adminId = adminCreated.getId();
-        String email = adminRequest.getEmail();
-        String password = adminRequest.getPassword();
-        String token = authClient.loginAndGetToken(email, password);
+        String token = authClient.loginAndGetToken(adminRequest.getEmail(), adminRequest.getPassword());
 
         adminCarrinhosClient = new CarrinhosClient(token);
         adminProdutosClient = new ProdutosClient(token);
