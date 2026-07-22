@@ -39,6 +39,9 @@ dependencies {
     // DataFaker
     testImplementation("net.datafaker:datafaker:2.4.3")
 
+    // JJWT
+    testImplementation("io.jsonwebtoken:jjwt:0.12.6")
+
     // Lombok
     compileOnly("org.projectlombok:lombok:1.18.46")
     annotationProcessor("org.projectlombok:lombok:1.18.46")
