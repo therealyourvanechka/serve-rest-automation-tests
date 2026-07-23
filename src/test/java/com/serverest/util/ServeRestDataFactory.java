@@ -1,9 +1,12 @@
 package com.serverest.util;
 
+import com.serverest.model.request.CarrinhoRequest;
+import com.serverest.model.request.ProdutoCarrinhoRequest;
 import com.serverest.model.request.ProdutoRequest;
 import com.serverest.model.request.UsuarioRequest;
 import net.datafaker.Faker;
 
+import java.util.List;
 import java.util.Locale;
 
 public class ServeRestDataFactory {
@@ -27,6 +30,21 @@ public class ServeRestDataFactory {
                 .preco(randomPreco())
                 .descricao(faker.lorem().sentence(3))
                 .quantidade(randomQuantidade());
+    }
+
+    public static CarrinhoRequest buildCarrinho(String idProduto, int quantidade) {
+        return CarrinhoRequest.builder()
+                .produtos(List.of(ProdutoCarrinhoRequest.builder()
+                        .idProduto(idProduto)
+                        .quantidade(quantidade)
+                        .build()))
+                .build();
+    }
+
+    public static CarrinhoRequest buildCarrinho(List<ProdutoCarrinhoRequest> produtos) {
+        return CarrinhoRequest.builder()
+                .produtos(produtos)
+                .build();
     }
 
     public static String randomNome() {
