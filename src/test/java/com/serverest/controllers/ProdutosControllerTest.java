@@ -314,14 +314,7 @@ class ProdutosControllerTest extends BaseTest {
         MessageResponse productResponse = adminProdutosClient.create(productRequest);
         String productId = productResponse.getId();
 
-        ProdutoCarrinhoRequest produtoCarrinho = ProdutoCarrinhoRequest.builder()
-                .idProduto(productId)
-                .quantidade(1)
-                .build();
-
-        CarrinhoRequest cartRequest = CarrinhoRequest.builder()
-                .produtos(List.of(produtoCarrinho))
-                .build();
+        CarrinhoRequest cartRequest = ServeRestDataFactory.buildCarrinho(productId, 1);
         adminCarrinhosClient.create(cartRequest);
 
         try {

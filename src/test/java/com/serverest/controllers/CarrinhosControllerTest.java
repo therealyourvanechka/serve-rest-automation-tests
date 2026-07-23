@@ -75,14 +75,7 @@ class CarrinhosControllerTest extends BaseTest {
         String productId = productCreated.getId();
         createdProductIds.add(productId);
 
-        ProdutoCarrinhoRequest produtoCarrinho = ProdutoCarrinhoRequest.builder()
-                .idProduto(productId)
-                .quantidade(quantidade)
-                .build();
-
-        CarrinhoRequest cartRequest = CarrinhoRequest.builder()
-                .produtos(List.of(produtoCarrinho))
-                .build();
+        CarrinhoRequest cartRequest = ServeRestDataFactory.buildCarrinho(productId, quantidade);
 
         Response response = adminCarrinhosClient.createRaw(cartRequest);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
@@ -99,14 +92,7 @@ class CarrinhosControllerTest extends BaseTest {
         String productId = productCreated.getId();
         createdProductIds.add(productId);
 
-        ProdutoCarrinhoRequest produtoCarrinho = ProdutoCarrinhoRequest.builder()
-                .idProduto(productId)
-                .quantidade(quantidade)
-                .build();
-
-        CarrinhoRequest cartRequest = CarrinhoRequest.builder()
-                .produtos(List.of(produtoCarrinho))
-                .build();
+        CarrinhoRequest cartRequest = ServeRestDataFactory.buildCarrinho(productId, quantidade);
 
         Response response = adminCarrinhosClient.createRaw(cartRequest);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_CREATED);
@@ -127,14 +113,7 @@ class CarrinhosControllerTest extends BaseTest {
         String productId = productCreated.getId();
         createdProductIds.add(productId);
 
-        ProdutoCarrinhoRequest produtoCarrinho = ProdutoCarrinhoRequest.builder()
-                .idProduto(productId)
-                .quantidade(cartQuantidade)
-                .build();
-
-        CarrinhoRequest cartRequest = CarrinhoRequest.builder()
-                .produtos(List.of(produtoCarrinho))
-                .build();
+        CarrinhoRequest cartRequest = ServeRestDataFactory.buildCarrinho(productId, cartQuantidade);
         adminCarrinhosClient.create(cartRequest);
 
         ProdutoResponse product = adminProdutosClient.getById(productId);
@@ -153,14 +132,7 @@ class CarrinhosControllerTest extends BaseTest {
         String productId = productCreated.getId();
         createdProductIds.add(productId);
 
-        ProdutoCarrinhoRequest produtoCarrinho = ProdutoCarrinhoRequest.builder()
-                .idProduto(productId)
-                .quantidade(1)
-                .build();
-
-        CarrinhoRequest cartRequest = CarrinhoRequest.builder()
-                .produtos(List.of(produtoCarrinho))
-                .build();
+        CarrinhoRequest cartRequest = ServeRestDataFactory.buildCarrinho(productId, 1);
 
         adminCarrinhosClient.create(cartRequest);
 
@@ -175,14 +147,7 @@ class CarrinhosControllerTest extends BaseTest {
     void shouldReturn400ForNonExistentProduct() {
         String fakeId = UUID.randomUUID().toString().replace("-", "").substring(0, 16);
 
-        ProdutoCarrinhoRequest produtoCarrinho = ProdutoCarrinhoRequest.builder()
-                .idProduto(fakeId)
-                .quantidade(1)
-                .build();
-
-        CarrinhoRequest cartRequest = CarrinhoRequest.builder()
-                .produtos(List.of(produtoCarrinho))
-                .build();
+        CarrinhoRequest cartRequest = ServeRestDataFactory.buildCarrinho(fakeId, 1);
 
         Response response = adminCarrinhosClient.createRaw(cartRequest);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
@@ -208,10 +173,7 @@ class CarrinhosControllerTest extends BaseTest {
                 .quantidade(2)
                 .build();
 
-        CarrinhoRequest cartRequest = CarrinhoRequest.builder()
-                .produtos(List.of(p1, p2))
-                .build();
-
+        CarrinhoRequest cartRequest = ServeRestDataFactory.buildCarrinho(List.of(p1, p2));
         Response response = adminCarrinhosClient.createRaw(cartRequest);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
     }
@@ -231,15 +193,7 @@ class CarrinhosControllerTest extends BaseTest {
         String productId = productCreated.getId();
         createdProductIds.add(productId);
 
-        ProdutoCarrinhoRequest produtoCarrinho = ProdutoCarrinhoRequest.builder()
-                .idProduto(productId)
-                .quantidade(cartQuantidade)
-                .build();
-
-        CarrinhoRequest cartRequest = CarrinhoRequest.builder()
-                .produtos(List.of(produtoCarrinho))
-                .build();
-
+        CarrinhoRequest cartRequest = ServeRestDataFactory.buildCarrinho(productId, cartQuantidade);
         adminCarrinhosClient.create(cartRequest);
 
         adminCarrinhosClient.completePurchase();
@@ -263,15 +217,7 @@ class CarrinhosControllerTest extends BaseTest {
         String productId = productCreated.getId();
         createdProductIds.add(productId);
 
-        ProdutoCarrinhoRequest produtoCarrinho = ProdutoCarrinhoRequest.builder()
-                .idProduto(productId)
-                .quantidade(cartQuantidade)
-                .build();
-
-        CarrinhoRequest cartRequest = CarrinhoRequest.builder()
-                .produtos(List.of(produtoCarrinho))
-                .build();
-
+        CarrinhoRequest cartRequest = ServeRestDataFactory.buildCarrinho(productId, cartQuantidade);
         adminCarrinhosClient.create(cartRequest);
 
         adminCarrinhosClient.cancelPurchase();
@@ -310,9 +256,7 @@ class CarrinhosControllerTest extends BaseTest {
                 .idProduto(productBCreated.getId())
                 .quantidade(quantidadeB)
                 .build();
-        CarrinhoRequest cartRequest = CarrinhoRequest.builder()
-                .produtos(List.of(pA, pB))
-                .build();
+        CarrinhoRequest cartRequest = ServeRestDataFactory.buildCarrinho(List.of(pA, pB));
         MessageResponse cartCreated = adminCarrinhosClient.create(cartRequest);
 
         CarrinhoResponse cart = adminCarrinhosClient.getById(cartCreated.getId());
