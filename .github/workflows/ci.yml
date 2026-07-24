@@ -16,13 +16,15 @@ jobs:
         with:
           java-version: 21
           distribution: temurin
+      - run: ./gradlew compileJava compileTestJava
       - run: ./gradlew test --tests "*Usuarios*"
       - run: ./gradlew test --tests "*Auth*"
       - run: ./gradlew test --tests "*Produtos*"
       - run: ./gradlew test --tests "*Carrinhos*"
       - run: ./gradlew test --tests "*E2e*"
       - name: Generate Allure Report
-        uses: simple-elf/allure-report-action@v1
+        if: always()
+        uses: simple-elf/allure-report-action@v1.11
         with:
           allure_results: allure-results
           allure_history: allure-history
