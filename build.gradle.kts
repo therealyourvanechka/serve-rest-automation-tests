@@ -50,4 +50,7 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    doFirst {
+        delete("build/allure-results")
+    }
 }

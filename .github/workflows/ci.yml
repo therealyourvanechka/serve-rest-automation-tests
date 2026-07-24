@@ -26,12 +26,7 @@ jobs:
     needs: build
     runs-on: ubuntu-24.04
     permissions:
-      contents: read
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -51,24 +46,8 @@ jobs:
           path: allure-history
         continue-on-error: true
 
-      - name: Clean allure-results
-        run: rm -rf build/allure-results
-
-      - name: Run Usuarios
-        continue-on-error: true
-        run: ./gradlew test --tests "*Usuarios*" --no-daemon
-      - name: Run Auth
-        continue-on-error: true
-        run: ./gradlew test --tests "*Auth*" --no-daemon
-      - name: Run Produtos
-        continue-on-error: true
-        run: ./gradlew test --tests "*Produtos*" --no-daemon
-      - name: Run Carrinhos
-        continue-on-error: true
-        run: ./gradlew test --tests "*Carrinhos*" --no-daemon
-      - name: Run E2e
-        continue-on-error: true
-        run: ./gradlew test --tests "*E2e*" --no-daemon
+      - name: Run tests
+        run: ./gradlew test
 
       - name: Copy Allure history
         if: always()
@@ -82,13 +61,10 @@ jobs:
         if: always()
         run: ./gradlew allureReport
 
-      - name: Upload Pages artifact
+      - name: Deploy Allure report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         if: always()
-        uses: actions/upload-pages-artifact@v3
         with:
-          path: build/allureReport
-
-      - name: Deploy to GitHub Pages
-        if: github.ref == 'refs/heads/main'
-        id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: build/allureReport
