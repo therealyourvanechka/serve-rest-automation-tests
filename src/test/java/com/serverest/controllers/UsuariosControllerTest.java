@@ -151,6 +151,7 @@ class UsuariosControllerTest extends BaseTest {
         createdIds.add(newUserId);
 
         usuariosClient.delete(newUserId);
+        createdIds.remove(newUserId);
 
         Response getResponse = usuariosClient.getByIdRaw(newUserId);
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
