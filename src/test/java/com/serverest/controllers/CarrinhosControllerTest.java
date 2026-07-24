@@ -78,7 +78,9 @@ class CarrinhosControllerTest extends BaseTest {
         CarrinhoRequest cartRequest = ServeRestDataFactory.buildCarrinho(productId, quantidade);
 
         Response response = adminCarrinhosClient.createRaw(cartRequest);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
+        assertThat(response.getStatusCode())
+                .as("Некорректное значение quantidade=%d должно приводить к 400", quantidade)
+                .isEqualTo(HttpStatus.SC_BAD_REQUEST);
     }
 
     @ParameterizedTest(name = "CR-BVA-03,04,05")
@@ -95,7 +97,9 @@ class CarrinhosControllerTest extends BaseTest {
         CarrinhoRequest cartRequest = ServeRestDataFactory.buildCarrinho(productId, quantidade);
 
         Response response = adminCarrinhosClient.createRaw(cartRequest);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_CREATED);
+        assertThat(response.getStatusCode())
+                .as("Граничное значение quantidade=%d должно создавать корзину с 201", quantidade)
+                .isEqualTo(HttpStatus.SC_CREATED);
     }
 
     @Test
@@ -117,7 +121,9 @@ class CarrinhosControllerTest extends BaseTest {
         adminCarrinhosClient.create(cartRequest);
 
         ProdutoResponse product = adminProdutosClient.getById(productId);
-        assertThat(product.getQuantidade()).isEqualTo(initialStock - cartQuantidade);
+        assertThat(product.getQuantidade())
+                .as("После создания корзины остаток товара должен уменьшиться на %d", cartQuantidade)
+                .isEqualTo(initialStock - cartQuantidade);
     }
 
     @Test
@@ -137,7 +143,9 @@ class CarrinhosControllerTest extends BaseTest {
         adminCarrinhosClient.create(cartRequest);
 
         Response secondResponse = adminCarrinhosClient.createRaw(cartRequest);
-        assertThat(secondResponse.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
+        assertThat(secondResponse.getStatusCode())
+                .as("Повторное создание корзины при активной первой должно возвращать 400")
+                .isEqualTo(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -150,7 +158,9 @@ class CarrinhosControllerTest extends BaseTest {
         CarrinhoRequest cartRequest = ServeRestDataFactory.buildCarrinho(fakeId, 1);
 
         Response response = adminCarrinhosClient.createRaw(cartRequest);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
+        assertThat(response.getStatusCode())
+                .as("Создание корзины с несуществующим товаром должно возвращать 400")
+                .isEqualTo(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -175,7 +185,9 @@ class CarrinhosControllerTest extends BaseTest {
 
         CarrinhoRequest cartRequest = ServeRestDataFactory.buildCarrinho(List.of(p1, p2));
         Response response = adminCarrinhosClient.createRaw(cartRequest);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
+        assertThat(response.getStatusCode())
+                .as("Дубликат idProduto в одном запросе корзины должен возвращать 400")
+                .isEqualTo(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -199,7 +211,9 @@ class CarrinhosControllerTest extends BaseTest {
         adminCarrinhosClient.completePurchase();
 
         ProdutoResponse afterPurchase = adminProdutosClient.getById(productId);
-        assertThat(afterPurchase.getQuantidade()).isEqualTo(initialStock - cartQuantidade);
+        assertThat(afterPurchase.getQuantidade())
+                .as("После завершения покупки остаток товара должен остаться уменьшенным на %d", cartQuantidade)
+                .isEqualTo(initialStock - cartQuantidade);
     }
 
     @Test
@@ -223,7 +237,9 @@ class CarrinhosControllerTest extends BaseTest {
         adminCarrinhosClient.cancelPurchase();
 
         ProdutoResponse afterCancel = adminProdutosClient.getById(productId);
-        assertThat(afterCancel.getQuantidade()).isEqualTo(initialStock);
+        assertThat(afterCancel.getQuantidade())
+                .as("После отмены корзины остаток товара должен вернуться к исходному значению %d", initialStock)
+                .isEqualTo(initialStock);
     }
 
     @Test
@@ -260,7 +276,9 @@ class CarrinhosControllerTest extends BaseTest {
         MessageResponse cartCreated = adminCarrinhosClient.create(cartRequest);
 
         CarrinhoResponse cart = adminCarrinhosClient.getById(cartCreated.getId());
-        assertThat(cart.getPrecoTotal()).isEqualTo(precoA * quantidadeA + precoB * quantidadeB);
+        assertThat(cart.getPrecoTotal())
+                .as("precoTotal должен равняться сумме произведений цены на количество по каждому товару")
+                .isEqualTo(precoA * quantidadeA + precoB * quantidadeB);
     }
 
     @Test
@@ -269,7 +287,9 @@ class CarrinhosControllerTest extends BaseTest {
     @Severity(SeverityLevel.MINOR)
     void shouldCompletePurchaseWithoutCart() {
         MessageResponse response = adminCarrinhosClient.completePurchase();
-        assertThat(response.getMessage()).contains("Não foi encontrado");
+        assertThat(response.getMessage())
+                .as("При завершении покупки без активной корзины должно вернуться сообщение об ошибке")
+                .contains("Não foi encontrado");
     }
 
     @Test
@@ -278,6 +298,8 @@ class CarrinhosControllerTest extends BaseTest {
     @Severity(SeverityLevel.MINOR)
     void shouldCancelPurchaseWithoutCart() {
         MessageResponse response = adminCarrinhosClient.cancelPurchase();
-        assertThat(response.getMessage()).contains("Não foi encontrado");
+        assertThat(response.getMessage())
+                .as("При отмене корзины без активной корзины должно вернуться сообщение об ошибке")
+                .contains("Não foi encontrado");
     }
 }

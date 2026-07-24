@@ -70,6 +70,7 @@ class AuthControllerTest extends BaseTest {
         );
 
         assertThat(response.getStatusCode())
+                .as("Логин с неверным паролем должен возвращать 401")
                 .isEqualTo(HttpStatus.SC_UNAUTHORIZED);
     }
 
@@ -86,6 +87,7 @@ class AuthControllerTest extends BaseTest {
         );
 
         assertThat(response.getStatusCode())
+                .as("Логин с несуществующим email должен возвращать 401")
                 .isEqualTo(HttpStatus.SC_UNAUTHORIZED);
     }
 
@@ -101,6 +103,7 @@ class AuthControllerTest extends BaseTest {
         );
 
         assertThat(response.getStatusCode())
+                .as("Логин без пароля должен возвращать 400")
                 .isEqualTo(HttpStatus.SC_BAD_REQUEST);
     }
 }

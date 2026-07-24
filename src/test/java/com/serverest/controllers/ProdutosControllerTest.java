@@ -105,7 +105,9 @@ class ProdutosControllerTest extends BaseTest {
                 .preco(preco)
                 .build();
         Response response = adminProdutosClient.createRaw(request);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
+        assertThat(response.getStatusCode())
+                .as("Создание товара с ценой %d должно возвращать 400", preco)
+                .isEqualTo(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -117,7 +119,9 @@ class ProdutosControllerTest extends BaseTest {
                 .quantidade(-1)
                 .build();
         Response response = adminProdutosClient.createRaw(request);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
+        assertThat(response.getStatusCode())
+                .as("Создание товара с quantidade=-1 должно возвращать 400")
+                .isEqualTo(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -127,7 +131,9 @@ class ProdutosControllerTest extends BaseTest {
     void shouldReturn403ForNonAdminCreate() {
         ProdutoRequest request = ServeRestDataFactory.defaultProduto().build();
         Response response = userProdutosClient.createRaw(request);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+        assertThat(response.getStatusCode())
+                .as("Обычный пользователь не может создать товар (403)")
+                .isEqualTo(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test
@@ -137,7 +143,9 @@ class ProdutosControllerTest extends BaseTest {
     void shouldReturn401ForCreateWithoutToken() {
         ProdutoRequest request = ServeRestDataFactory.defaultProduto().build();
         Response response = noAuthProdutosClient.createRaw(request);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_UNAUTHORIZED);
+        assertThat(response.getStatusCode())
+                .as("Создание товара без токена должно возвращать 401")
+                .isEqualTo(HttpStatus.SC_UNAUTHORIZED);
     }
 
     @Test
@@ -149,7 +157,9 @@ class ProdutosControllerTest extends BaseTest {
         String expiredToken = JwtHelper.generateExpiredToken(adminEmail, adminPassword);
         ProdutosClient expiredClient = new ProdutosClient(expiredToken);
         Response response = expiredClient.createRaw(request);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_UNAUTHORIZED);
+        assertThat(response.getStatusCode())
+                .as("Создание товара с просроченным токеном должно возвращать 401")
+                .isEqualTo(HttpStatus.SC_UNAUTHORIZED);
     }
 
     @Test
@@ -164,8 +174,11 @@ class ProdutosControllerTest extends BaseTest {
         createdProductIds.add(firstCreate.getId());
 
         Response secondCreate = adminProdutosClient.createRaw(request);
-        assertThat(secondCreate.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
+        assertThat(secondCreate.getStatusCode())
+                .as("Дубликат названия товара должен возвращать 400")
+                .isEqualTo(HttpStatus.SC_BAD_REQUEST);
         assertThat(secondCreate.jsonPath().getString("message"))
+                .as("Сообщение об ошибке должно содержать 'Já existe produto'")
                 .contains("Já existe produto");
     }
 
@@ -203,7 +216,9 @@ class ProdutosControllerTest extends BaseTest {
                 .preco(preco)
                 .build();
         Response response = adminProdutosClient.updateRaw(created.getId(), updateRequest);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
+        assertThat(response.getStatusCode())
+                .as("Обновление товара с ценой %d должно возвращать 400", preco)
+                .isEqualTo(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -219,7 +234,9 @@ class ProdutosControllerTest extends BaseTest {
                 .quantidade(-1)
                 .build();
         Response response = adminProdutosClient.updateRaw(created.getId(), updateRequest);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
+        assertThat(response.getStatusCode())
+                .as("Обновление товара с quantidade=-1 должно возвращать 400")
+                .isEqualTo(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -238,7 +255,9 @@ class ProdutosControllerTest extends BaseTest {
         adminProdutosClient.update(productId, updateRequest);
 
         ProdutoResponse product = adminProdutosClient.getById(productId);
-        assertThat(product.getQuantidade()).isZero();
+        assertThat(product.getQuantidade())
+                .as("Количество товара должно быть 0 после обновления")
+                .isZero();
     }
 
     @Test
@@ -252,7 +271,9 @@ class ProdutosControllerTest extends BaseTest {
 
         ProdutoRequest updateRequest = ServeRestDataFactory.defaultProduto().build();
         Response response = noAuthProdutosClient.updateRaw(createResponse.getId(), updateRequest);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_UNAUTHORIZED);
+        assertThat(response.getStatusCode())
+                .as("Обновление товара без токена должно возвращать 401")
+                .isEqualTo(HttpStatus.SC_UNAUTHORIZED);
     }
 
     @Test
@@ -268,7 +289,9 @@ class ProdutosControllerTest extends BaseTest {
         ProdutosClient expiredClient = new ProdutosClient(expiredToken);
         ProdutoRequest updateRequest = ServeRestDataFactory.defaultProduto().build();
         Response response = expiredClient.updateRaw(createResponse.getId(), updateRequest);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_UNAUTHORIZED);
+        assertThat(response.getStatusCode())
+                .as("Обновление товара с просроченным токеном должно возвращать 401")
+                .isEqualTo(HttpStatus.SC_UNAUTHORIZED);
     }
 
     @Test
@@ -282,7 +305,9 @@ class ProdutosControllerTest extends BaseTest {
 
         ProdutoRequest updateRequest = ServeRestDataFactory.defaultProduto().build();
         Response response = userProdutosClient.updateRaw(createResponse.getId(), updateRequest);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+        assertThat(response.getStatusCode())
+                .as("Обычный пользователь не может обновить товар (403)")
+                .isEqualTo(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test
@@ -294,13 +319,17 @@ class ProdutosControllerTest extends BaseTest {
         ProdutoRequest request = ServeRestDataFactory.defaultProduto().build();
 
         Response updateResponse = adminProdutosClient.updateRaw(nonExistentId, request);
-        assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.SC_CREATED);
+        assertThat(updateResponse.getStatusCode())
+                .as("PUT на несуществующий ID должен создавать товар (201)")
+                .isEqualTo(HttpStatus.SC_CREATED);
 
         String createdId = updateResponse.jsonPath().getString("_id");
         createdProductIds.add(createdId);
 
         ProdutoResponse product = adminProdutosClient.getById(createdId);
-        assertThat(product.getNome()).isEqualTo(request.getNome());
+        assertThat(product.getNome())
+                .as("Название созданного товара должно совпадать с переданным")
+                .isEqualTo(request.getNome());
     }
 
     @Test
@@ -319,12 +348,17 @@ class ProdutosControllerTest extends BaseTest {
 
         try {
             Response deleteResponse = adminProdutosClient.deleteRaw(productId);
-            assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
+            assertThat(deleteResponse.getStatusCode())
+                    .as("Удаление товара в активной корзине должно возвращать 400")
+                    .isEqualTo(HttpStatus.SC_BAD_REQUEST);
             assertThat(deleteResponse.jsonPath().getString("message"))
+                    .as("Сообщение об ошибке должно содержать 'carrinho'")
                     .contains("carrinho");
 
             ProdutoResponse product = adminProdutosClient.getById(productId);
-            assertThat(product.getNome()).isEqualTo(productRequest.getNome());
+            assertThat(product.getNome())
+                    .as("Товар не должен быть удалён")
+                    .isEqualTo(productRequest.getNome());
         } finally {
             adminCarrinhosClient.cancelPurchase();
             adminProdutosClient.deleteRaw(productId);
@@ -343,7 +377,9 @@ class ProdutosControllerTest extends BaseTest {
         adminProdutosClient.delete(productId);
 
         Response getResponse = adminProdutosClient.getByIdRaw(productId);
-        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
+        assertThat(getResponse.getStatusCode())
+                .as("Удалённый товар должен быть недоступен (400)")
+                .isEqualTo(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -356,7 +392,9 @@ class ProdutosControllerTest extends BaseTest {
         createdProductIds.add(createResponse.getId());
 
         Response response = userProdutosClient.deleteRaw(createResponse.getId());
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);
+        assertThat(response.getStatusCode())
+                .as("Обычный пользователь не может удалить товар (403)")
+                .isEqualTo(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test
@@ -369,7 +407,9 @@ class ProdutosControllerTest extends BaseTest {
         createdProductIds.add(createResponse.getId());
 
         Response response = noAuthProdutosClient.deleteRaw(createResponse.getId());
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_UNAUTHORIZED);
+        assertThat(response.getStatusCode())
+                .as("Удаление товара без токена должно возвращать 401")
+                .isEqualTo(HttpStatus.SC_UNAUTHORIZED);
     }
 
     @Test
@@ -384,7 +424,9 @@ class ProdutosControllerTest extends BaseTest {
         String expiredToken = JwtHelper.generateExpiredToken(adminEmail, adminPassword);
         ProdutosClient expiredClient = new ProdutosClient(expiredToken);
         Response response = expiredClient.deleteRaw(createResponse.getId());
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_UNAUTHORIZED);
+        assertThat(response.getStatusCode())
+                .as("Удаление товара с просроченным токеном должно возвращать 401")
+                .isEqualTo(HttpStatus.SC_UNAUTHORIZED);
     }
 
     @Test
@@ -399,10 +441,14 @@ class ProdutosControllerTest extends BaseTest {
         createdProductIds.add(createResponse.getId());
 
         Response response = adminProdutosClient.getAll(Map.of("preco", 300));
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
+        assertThat(response.getStatusCode())
+                .as("Запрос с фильтром по preco должен возвращать 200")
+                .isEqualTo(HttpStatus.SC_OK);
 
         List<String> ids = response.jsonPath().getList("produtos._id");
-        assertThat(ids).contains(createResponse.getId());
+        assertThat(ids)
+                .as("Созданный товар должен быть в результатах фильтра по preco")
+                .contains(createResponse.getId());
     }
 
     @Test
@@ -417,10 +463,14 @@ class ProdutosControllerTest extends BaseTest {
         createdProductIds.add(createResponse.getId());
 
         Response response = adminProdutosClient.getAll(Map.of("quantidade", 0));
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
+        assertThat(response.getStatusCode())
+                .as("Запрос с фильтром по quantidade должен возвращать 200")
+                .isEqualTo(HttpStatus.SC_OK);
 
         List<String> ids = response.jsonPath().getList("produtos._id");
-        assertThat(ids).contains(createResponse.getId());
+        assertThat(ids)
+                .as("Созданный товар должен быть в результатах фильтра по quantidade")
+                .contains(createResponse.getId());
     }
 
     @Test
@@ -435,10 +485,14 @@ class ProdutosControllerTest extends BaseTest {
         createdProductIds.add(createResponse.getId());
 
         Response response = adminProdutosClient.getAll(Map.of("nome", "macbook"));
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
+        assertThat(response.getStatusCode())
+                .as("Запрос с фильтром по nome должен возвращать 200")
+                .isEqualTo(HttpStatus.SC_OK);
 
         List<String> ids = response.jsonPath().getList("produtos._id");
-        assertThat(ids).contains(createResponse.getId());
+        assertThat(ids)
+                .as("Созданный товар должен быть в результатах фильтра по nome")
+                .contains(createResponse.getId());
     }
 
 }

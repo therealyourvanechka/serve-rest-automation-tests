@@ -70,8 +70,11 @@ class UsuariosControllerTest extends BaseTest {
                 .build();
 
         Response duplicateResponse = usuariosClient.createRaw(duplicateRequest);
-        assertThat(duplicateResponse.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
+        assertThat(duplicateResponse.getStatusCode())
+                .as("Дубликат email должен возвращать 400")
+                .isEqualTo(HttpStatus.SC_BAD_REQUEST);
         assertThat(duplicateResponse.jsonPath().getString("message"))
+                .as("Сообщение об ошибке должно содержать 'já está sendo usado'")
                 .contains("já está sendo usado");
     }
 
@@ -87,7 +90,9 @@ class UsuariosControllerTest extends BaseTest {
                 .build();
 
         Response response = usuariosClient.createRaw(request);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
+        assertThat(response.getStatusCode())
+                .as("Создание пользователя без email должно возвращать 400")
+                .isEqualTo(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -100,7 +105,9 @@ class UsuariosControllerTest extends BaseTest {
                 .build();
 
         Response response = usuariosClient.createRaw(request);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
+        assertThat(response.getStatusCode())
+                .as("Недопустимое значение administrador должно возвращать 400")
+                .isEqualTo(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -128,12 +135,17 @@ class UsuariosControllerTest extends BaseTest {
 
         try {
             Response deleteResponse = usuariosClient.deleteRaw(adminId);
-            assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
+            assertThat(deleteResponse.getStatusCode())
+                    .as("Удаление пользователя с активной корзиной должно возвращать 400")
+                    .isEqualTo(HttpStatus.SC_BAD_REQUEST);
             assertThat(deleteResponse.jsonPath().getString("message"))
+                    .as("Сообщение об ошибке должно содержать 'carrinho'")
                     .contains("carrinho");
 
             UsuarioResponse getResponse = usuariosClient.getById(adminId);
-            assertThat(getResponse.getEmail()).isEqualTo(adminRequest.getEmail());
+            assertThat(getResponse.getEmail())
+                    .as("Пользователь не должен быть удалён")
+                    .isEqualTo(adminRequest.getEmail());
         } finally {
             adminCarrinhosClient.cancelPurchase();
             adminProdutosClient.delete(produtoId);
@@ -154,7 +166,9 @@ class UsuariosControllerTest extends BaseTest {
         createdIds.remove(newUserId);
 
         Response getResponse = usuariosClient.getByIdRaw(newUserId);
-        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
+        assertThat(getResponse.getStatusCode())
+                .as("Удалённый пользователь должен быть недоступен")
+                .isEqualTo(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -166,13 +180,17 @@ class UsuariosControllerTest extends BaseTest {
         UsuarioRequest request = ServeRestDataFactory.defaultUsuario().build();
 
         Response updateResponse = usuariosClient.updateRaw(nonExistentId, request);
-        assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.SC_CREATED);
+        assertThat(updateResponse.getStatusCode())
+                .as("PUT на несуществующий ID должен создавать пользователя (201)")
+                .isEqualTo(HttpStatus.SC_CREATED);
 
         String createdId = updateResponse.jsonPath().getString("_id");
         createdIds.add(createdId);
 
         UsuarioResponse getResponse = usuariosClient.getById(createdId);
-        assertThat(getResponse.getEmail()).isEqualTo(request.getEmail());
+        assertThat(getResponse.getEmail())
+                .as("Email созданного пользователя должен совпадать с переданным")
+                .isEqualTo(request.getEmail());
     }
 
     @Test
@@ -195,8 +213,11 @@ class UsuariosControllerTest extends BaseTest {
                 .build();
 
         Response updateBResponse = usuariosClient.updateRaw(userBId, updateBRequest);
-        assertThat(updateBResponse.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
+        assertThat(updateBResponse.getStatusCode())
+                .as("PUT с чужим email должен возвращать 400")
+                .isEqualTo(HttpStatus.SC_BAD_REQUEST);
         assertThat(updateBResponse.jsonPath().getString("message"))
+                .as("Сообщение об ошибке должно содержать 'já está sendo usado'")
                 .contains("já está sendo usado");
     }
 
@@ -232,11 +253,17 @@ class UsuariosControllerTest extends BaseTest {
         createdIds.add(adminResponse.getId());
 
         Response response = usuariosClient.getAll(Map.of("administrador", "true"));
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
+        assertThat(response.getStatusCode())
+                .as("Запрос списка с фильтром должен возвращать 200")
+                .isEqualTo(HttpStatus.SC_OK);
 
         List<String> adminValues = response.jsonPath().getList("usuarios.administrador");
-        assertThat(adminValues).isNotEmpty();
-        assertThat(adminValues).allMatch("true"::equals);
+        assertThat(adminValues)
+                .as("Список администраторов не должен быть пустым")
+                .isNotEmpty();
+        assertThat(adminValues)
+                .as("Все элементы должны быть администраторами (true)")
+                .allMatch("true"::equals);
     }
 
     @Test
@@ -252,9 +279,13 @@ class UsuariosControllerTest extends BaseTest {
         createdIds.add(userId);
 
         Response response = usuariosClient.getAll(Map.of("nome", "ivan"));
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
+        assertThat(response.getStatusCode())
+                .as("Запрос с фильтром по nome должен возвращать 200")
+                .isEqualTo(HttpStatus.SC_OK);
 
         List<String> ids = response.jsonPath().getList("usuarios._id");
-        assertThat(ids).contains(userId);
+        assertThat(ids)
+                .as("Созданный пользователь должен быть в результатах фильтра")
+                .contains(userId);
     }
 }
