@@ -17,7 +17,7 @@ repositories {
 }
 
 allure {
-    version = "2.29.1"
+    version = "2.42.0"
     report {
         reportDir.set(layout.buildDirectory)
     }
@@ -50,7 +50,4 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-    doFirst {
-        delete("build/allure-results")
-    }
 }
