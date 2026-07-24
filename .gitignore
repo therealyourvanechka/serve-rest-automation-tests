@@ -2,7 +2,5 @@
 .idea
 build/
 allureReport/
-allure-results/
-allure-history/
 .env
 .DS_Store

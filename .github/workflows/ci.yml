@@ -8,49 +8,69 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
         with:
           java-version: 21
           distribution: temurin
-      - run: ./gradlew compileJava compileTestJava
-      - run: ./gradlew test --tests "*Usuarios*"
-      - run: ./gradlew test --tests "*Auth*"
-      - run: ./gradlew test --tests "*Produtos*"
-      - run: ./gradlew test --tests "*Carrinhos*"
-      - run: ./gradlew test --tests "*E2e*"
-      - name: Generate Allure Report
-        if: always()
-        uses: simple-elf/allure-report-action@v1.11
-        with:
-          allure_results: allure-results
-          allure_history: allure-history
-      - uses: actions/upload-artifact@v4
-        with:
-          name: allure-report
-          path: allure-history
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Compile
+        run: ./gradlew compileJava compileTestJava
 
-  deploy:
-    if: github.ref == 'refs/heads/main'
-    needs: test
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  test:
+    needs: build
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
         with:
-          name: allure-report
-          path: allure-report
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+          java-version: 21
+          distribution: temurin
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Get Allure history from gh-pages
+        uses: actions/checkout@v4
         with:
-          path: allure-report
-      - uses: actions/deploy-pages@v4
-        id: deployment
+          ref: gh-pages
+          path: allure-history
+        continue-on-error: true
+
+      - name: Run Usuarios
+        run: ./gradlew test --tests "*Usuarios*"
+      - name: Run Auth
+        run: ./gradlew test --tests "*Auth*"
+      - name: Run Produtos
+        run: ./gradlew test --tests "*Produtos*"
+      - name: Run Carrinhos
+        run: ./gradlew test --tests "*Carrinhos*"
+      - name: Run E2e
+        run: ./gradlew test --tests "*E2e*"
+
+      - name: Copy Allure history
+        if: always()
+        run: |
+          mkdir -p build/allure-results/history
+          if [ -d "allure-history/history" ]; then
+            cp -r allure-history/history/* build/allure-results/history/
+          fi
+
+      - name: Generate Allure report
+        if: always()
+        run: ./gradlew allureReport
+
+      - name: Deploy Allure report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: build/allureReport
