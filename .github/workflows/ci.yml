@@ -1,4 +1,4 @@
-name: CI / Allure Report
+name: Run API Tests
 
 on:
   push:
