@@ -1,0 +1,53 @@
+name: CI / Allure Report
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: temurin
+      - run: ./gradlew test --tests "*Usuarios*"
+      - run: ./gradlew test --tests "*Auth*"
+      - run: ./gradlew test --tests "*Produtos*"
+      - run: ./gradlew test --tests "*Carrinhos*"
+      - run: ./gradlew test --tests "*E2e*"
+      - name: Generate Allure Report
+        uses: simple-elf/allure-report-action@v1
+        with:
+          allure_results: allure-results
+          allure_history: allure-history
+      - uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-history
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: test
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: allure-report
+      - uses: actions/deploy-pages@v4
+        id: deployment
