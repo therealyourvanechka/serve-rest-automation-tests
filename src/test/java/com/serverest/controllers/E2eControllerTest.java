@@ -65,10 +65,7 @@ class E2eControllerTest extends BaseTest {
     }
 
 
-    /*Первый запуск: JVM холодная — запросы медленные, оба треда реально
-    одновременно долетают до сервера, тест находит баг (201+201)
-    Повторные: JVM горячая, код летит — один тред успевает раньше,
-    сервер обрабатывает последовательно, тест маскирует баг (201+400)*/
+    // Прогрев: заранее открываем соединения, чтобы боевые запросы улетели строго одновременно
     @Test
     @Tag("E2E-03")
     @DisplayName("E2E-03: Overselling — два пользователя одновременно покупают последний товар")
@@ -100,11 +97,13 @@ class E2eControllerTest extends BaseTest {
 
         try {
             Future<Response> futureA = executor.submit(() -> {
+                new CarrinhosClient().getAll();
                 barrier.await();
                 return clientA.createRaw(cart);
             });
 
             Future<Response> futureB = executor.submit(() -> {
+                new CarrinhosClient().getAll();
                 barrier.await();
                 return clientB.createRaw(cart);
             });
