@@ -1,0 +1,32 @@
+<div>POST to https://serverest.dev/produtos</div>
+
+    <h4>Body</h4>
+    <div>
+    <pre class="preformated-text">
+{
+    &quot;nome&quot;: &quot;Durable Cotton Chair&quot;,
+    &quot;preco&quot;: 1808,
+    &quot;descricao&quot;: &quot;Impedit aut ipsum.&quot;,
+    &quot;quantidade&quot;: 10
+}    </pre>
+    </div>
+
+    <h4>Headers</h4>
+    <div>
+            <div>Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZpbmNlbnQuYmF0ekBob3RtYWlsLmNvbSIsInBhc3N3b3JkIjoiOTAwZDk4NGR5IiwiaWF0IjoxNzg1MDQ4NTMwLCJleHAiOjE3ODUwNDkxMzB9.g-ux7AvHu6ZTcpMbgSyg9fczajewT4NT0APlRXWzXA0</div>
+            <div>Accept: application/json</div>
+            <div>Content-Type: application/json</div>
+    </div>
+
+
+
+    <h4>Curl</h4>
+    <div>
+        curl -v -X POST &#39;https://serverest.dev/produtos&#39; -H &#39;Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZpbmNlbnQuYmF0ekBob3RtYWlsLmNvbSIsInBhc3N3b3JkIjoiOTAwZDk4NGR5IiwiaWF0IjoxNzg1MDQ4NTMwLCJleHAiOjE3ODUwNDkxMzB9.g-ux7AvHu6ZTcpMbgSyg9fczajewT4NT0APlRXWzXA0&#39; -H &#39;Accept: application/json&#39; -H &#39;Content-Type: application/json&#39; -d &#39;{
+    &quot;nome&quot;: &quot;Durable Cotton Chair&quot;,
+    &quot;preco&quot;: 1808,
+    &quot;descricao&quot;: &quot;Impedit aut ipsum.&quot;,
+    &quot;quantidade&quot;: 10
+}&#39;
+    </div>
+
